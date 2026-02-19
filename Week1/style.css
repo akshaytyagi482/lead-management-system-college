@@ -1,0 +1,305 @@
+/* ============================
+   RESET & BASE
+   ============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f3f4f6;
+    color: #1f2937;
+}
+
+/* ============================
+   CONTAINER
+   ============================ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ============================
+   HEADER
+   ============================ */
+.header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 3rem 2rem;
+    border-radius: 0 0 12px 12px;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.header .tagline {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* ============================
+   NAVBAR
+   ============================ */
+.navbar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    background: #111827;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.navbar a:hover {
+    background: #2563eb;
+}
+
+/* ============================
+   SECTIONS
+   ============================ */
+.section {
+    margin: 2rem 0;
+}
+
+.section h2 {
+    font-size: 1.8rem;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #2563eb;
+    display: inline-block;
+}
+
+/* ============================
+   STATS GRID (Dashboard)
+   ============================ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    color: #1f2937;
+}
+
+.stat-value.blue { color: #2563eb; }
+.stat-value.indigo { color: #4f46e5; }
+.stat-value.green { color: #16a34a; }
+
+/* ============================
+   TABLE (Leads)
+   ============================ */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+thead {
+    background: #f3f4f6;
+}
+
+th {
+    text-align: left;
+    padding: 14px 18px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 14px 18px;
+    border-top: 1px solid #e5e7eb;
+}
+
+tr:hover {
+    background: #f9fafb;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge.source {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge.status {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+/* ============================
+   REPORTS GRID
+   ============================ */
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.report-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.report-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #374151;
+}
+
+.report-card ul {
+    list-style: none;
+}
+
+.report-card li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+}
+
+.report-card li:last-child {
+    border-bottom: none;
+}
+
+/* ============================
+   ABOUT
+   ============================ */
+.about-content {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.about-content p {
+    margin-bottom: 1rem;
+    color: #4b5563;
+}
+
+.about-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================
+   FOOTER
+   ============================ */
+.footer {
+    text-align: center;
+    padding: 2rem;
+    margin-top: 2rem;
+    color: #9ca3af;
+    font-size: 0.9rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* ============================
+   RESPONSIVE - Mobile First
+   ============================ */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .header .tagline {
+        font-size: 0.95rem;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section h2 {
+        font-size: 1.4rem;
+    }
+
+    th, td {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 2rem 1rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+}
