@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <h1>Lead Management System</h1>
+            <p class="tagline">Track, Manage & Convert Your Leads Efficiently</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <a href="#dashboard">Dashboard</a>
+            <a href="#leads">Leads</a>
+            <a href="#reports">Reports</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section">
+            <h2>Dashboard Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="stat-label">Total Leads</p>
+                    <p class="stat-value" id="totalLeads">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Website Leads</p>
+                    <p class="stat-value blue" id="websiteLeads">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Facebook Leads</p>
+                    <p class="stat-value indigo" id="facebookLeads">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Google Leads</p>
+                    <p class="stat-value green" id="googleLeads">0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leads Table Section -->
+        <section id="leads" class="section">
+            <h2>Recent Leads</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Source</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTableBody">
+                        <!-- Rows will be dynamically inserted by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="section">
+            <h2>Reports Summary</h2>
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Lead Sources</h3>
+                    <ul id="sourceReport">
+                        <!-- Dynamically filled -->
+                    </ul>
+                </div>
+                <div class="report-card">
+                    <h3>Lead Status</h3>
+                    <ul id="statusReport">
+                        <!-- Dynamically filled -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact / About Section -->
+        <section id="contact" class="section">
+            <h2>About This Project</h2>
+            <div class="about-content">
+                <p>
+                    The <strong>Lead Management System</strong> is a full-stack web application
+                    designed to help businesses capture, track, and manage leads from multiple
+                    sources like websites, Google Ads, and Facebook campaigns.
+                </p>
+                <p>
+                    Built with modern web technologies including HTML5, CSS3, JavaScript,
+                    React.js, Node.js, Express.js, and MongoDB.
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 Lead Management System. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
