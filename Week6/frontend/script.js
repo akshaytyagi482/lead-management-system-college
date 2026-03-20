@@ -1,7 +1,7 @@
 // ============================
-// API Base URL - Change this to your deployed backend URL
+// API Base URL - Loaded from config.js (environment variable)
 // ============================
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = config.API_BASE;
 
 // ============================
 // DOM Content Loaded
