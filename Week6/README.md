@@ -1,28 +1,32 @@
-# Week 6 - AJAX/JSON Integration
+# Week 6 - Vite Frontend + API Integration
 
-## Focus: Dynamic Data Fetch (Frontend ↔ Backend)
+## Focus: Dynamic Data Fetch (Frontend <-> Backend)
 
 ### Deliverable
-Dynamic content updates using Fetch API (AJAX) — no page reloads.
+Week 6 frontend migrated to Vite + React with backend API integration.
 
 ### Features Implemented
-- **Fetch API (AJAX)** for all server communication — zero page reloads
-- **Login via API**: `POST /api/auth/login` with JSON response, token stored in localStorage
-- **Fetch Leads from API**: `GET /api/leads` with Bearer token authorization
-- **Create Lead via API**: `POST /api/leads` with JSON body, dynamic table refresh
-- **Dynamic Dashboard**: Stats update automatically after fetching data from server
-- **Loading States**: "Loading leads from server..." indicator during API calls
-- **Error Handling**: API errors shown to user without page reload
-- **Client + Server Validation**: Form validated on client, then API validates on server
+- Login using API endpoint `POST /api/auth/login` and store JWT in localStorage
+- Fetch protected leads using `GET /api/leads` with Bearer token
+- Create leads using `POST /api/leads`
+- Dashboard stats derived from live API data
+- Loading and API error states shown in UI
+- API base URL configured through Vite environment variable (`VITE_API_BASE`)
 
 ### Project Structure
 ```
 Week6/
 ├── frontend/
-│   ├── index.html      (UI with login, dashboard, form, table)
-│   ├── style.css        (Responsive styling)
-│   └── script.js        (Fetch API calls, DOM updates)
-├── backend/             (Same Express.js API from Week 5)
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── .env.example
+│   └── src/
+│       ├── main.jsx
+│       ├── App.jsx
+│       ├── api.js
+│       └── styles.css
+├── backend/
 │   ├── server.js
 │   ├── package.json
 │   ├── config/db.js
@@ -35,20 +39,25 @@ Week6/
 
 ### How to Run
 ```bash
-# Start Backend
+# 1) Start backend
 cd backend
 npm install
-# Create .env file with MONGO_URI, JWT_SECRET, PORT=5000
+# create .env with MONGO_URI, JWT_SECRET, PORT=5000
 npm run dev
 
-# Open Frontend
-# Open frontend/index.html in browser
-# Or use Live Server extension in VS Code
+# 2) Start frontend (new terminal)
+cd ../frontend
+npm install
+# copy .env.example to .env if needed and edit VITE_API_BASE
+npm run dev
 ```
 
+### Default API URL
+- `VITE_API_BASE=http://localhost:5000/api`
+
 ### Technologies Used
-- HTML5, CSS3, JavaScript (Fetch API)
-- Node.js, Express.js (Backend)
+- Vite + React
+- JavaScript (Fetch API)
+- Node.js, Express.js
 - MongoDB + Mongoose
 - JWT Authentication
-- AJAX/JSON for dynamic data exchange
