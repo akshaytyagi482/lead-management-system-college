@@ -3,6 +3,51 @@ const Lead = require("../models/Lead");
 const { getIo } = require("../realtime/socket");
 
 const ALLOWED_PROVIDERS = ["google", "facebook"];
+const PROVIDER_REQUEST_TIMEOUT_MS = Number(process.env.PROVIDER_REQUEST_TIMEOUT_MS || 10000);
+const PROVIDER_SYNC_RETRIES = Number(process.env.PROVIDER_SYNC_RETRIES || 3);
+const PROVIDER_SYNC_COOLDOWN_MS = Number(process.env.PROVIDER_SYNC_COOLDOWN_MS || 15000);
+const recentSyncCache = new Map();
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getRetryDelayMs = (attempt, retryAfterHeader) => {
+  const retryAfterSeconds = Number(retryAfterHeader);
+  if (!Number.isNaN(retryAfterSeconds) && retryAfterSeconds > 0) {
+    return retryAfterSeconds * 1000;
+  }
+
+  return Math.min(2000 * Math.pow(2, attempt - 1), 12000);
+};
+
+const fetchProviderLeads = async (url) => {
+  let lastError;
+
+  for (let attempt = 1; attempt <= PROVIDER_SYNC_RETRIES; attempt += 1) {
+    try {
+      const response = await axios.get(url, {
+        timeout: PROVIDER_REQUEST_TIMEOUT_MS,
+      });
+
+      return response.data;
+    } catch (error) {
+      lastError = error;
+      const status = error.response?.status;
+      const isRetriableStatus = [429, 502, 503, 504].includes(status);
+      const isTimeout = error.code === "ECONNABORTED";
+      const isLastAttempt = attempt === PROVIDER_SYNC_RETRIES;
+
+      if (isLastAttempt || (!isRetriableStatus && !isTimeout)) {
+        break;
+      }
+
+      const delayMs = getRetryDelayMs(attempt, error.response?.headers?.["retry-after"]);
+      await sleep(delayMs);
+    }
+  }
+
+  throw lastError;
+};
+
 const getMockProviderBaseUrl = () => {
   const configuredUrl = process.env.MOCK_PROVIDER_URL;
 
@@ -27,10 +72,32 @@ exports.syncProviderLeads = async (req, res) => {
     }
 
     const accountId = `${req.user._id}-${normalizedProvider}`;
-  const baseUrl = getMockProviderBaseUrl();
+    const baseUrl = getMockProviderBaseUrl();
     const url = `${baseUrl}/api/mock/${normalizedProvider}/${accountId}/leads`;
+    const cacheKey = `${normalizedProvider}:${accountId}`;
+    const lastSyncAt = recentSyncCache.get(cacheKey);
+    const now = Date.now();
 
-    const { data } = await axios.get(url);
+    if (lastSyncAt && now - lastSyncAt < PROVIDER_SYNC_COOLDOWN_MS) {
+      const cachedLeads = await Lead.find({
+        source: normalizedProvider,
+        providerAccountId: accountId,
+      }).sort({ createdAt: -1 });
+      const totalLeadsInSystem = await Lead.countDocuments();
+
+      return res.json({
+        message: `${normalizedProvider} leads already synced recently`,
+        provider: normalizedProvider,
+        accountId,
+        fetched: cachedLeads.length,
+        inserted: 0,
+        updated: 0,
+        totalLeadsInSystem,
+        cached: true,
+      });
+    }
+
+    const data = await fetchProviderLeads(url);
     const providerLeads = data.leads || [];
 
     let inserted = 0;
@@ -86,6 +153,8 @@ exports.syncProviderLeads = async (req, res) => {
     }
 
     const allLeads = await Lead.find().sort({ createdAt: -1 });
+    recentSyncCache.set(cacheKey, now);
+
     const io = getIo();
     if (io) {
       io.emit("leads:refresh", { reason: "provider-sync" });
@@ -101,6 +170,22 @@ exports.syncProviderLeads = async (req, res) => {
       totalLeadsInSystem: allLeads.length,
     });
   } catch (error) {
+    const upstreamStatus = error.response?.status;
+
+    if (upstreamStatus === 429) {
+      return res.status(429).json({
+        message: "Provider rate limit reached. Please retry in a few seconds.",
+        error: error.message,
+      });
+    }
+
+    if ([502, 503, 504].includes(upstreamStatus)) {
+      return res.status(502).json({
+        message: "Provider service is temporarily unavailable. Please retry shortly.",
+        error: error.message,
+      });
+    }
+
     return res.status(500).json({
       message: "Failed to sync provider leads",
       error: error.message,
