@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../utils/api";
+import axios from "axios";
 
 const CreateLead = () => {
   const [form, setForm] = useState({
@@ -31,9 +31,17 @@ const CreateLead = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
 
-      await api.post("/leads", form, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/leads`,
+        form,
+        {
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : {},
+        }
+      );
       setSuccess("Lead created successfully");
       setForm({ name: "", phone: "", email: "", source: "website" });
     } catch (err) {
