@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const AuthContext = createContext();
 
@@ -23,14 +23,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const { data } = await axios.get(
-          "http://localhost:5000/api/auth/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
+        const { data } = await api.get("/auth/profile");
 
         setUser(data);
       } catch (error) {
@@ -48,10 +41,7 @@ export const AuthProvider = ({ children }) => {
    * Login
    */
   const login = async (email, password) => {
-    const { data } = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      { email, password }
-    );
+    const { data } = await api.post("/auth/login", { email, password });
 
     localStorage.setItem("token", data.token);
     setUser(data);
