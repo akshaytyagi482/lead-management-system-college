@@ -19,6 +19,41 @@ const getRetryDelayMs = (attempt, retryAfterHeader) => {
   return Math.min(2000 * Math.pow(2, attempt - 1), 12000);
 };
 
+const isRetriableUpstreamError = (error) => {
+  const status = error.response?.status;
+  const isTimeout = error.code === "ECONNABORTED";
+  return isTimeout || [429, 502, 503, 504].includes(status);
+};
+
+const seededNumber = (seedText, min, max) => {
+  let hash = 0;
+  for (let i = 0; i < seedText.length; i += 1) {
+    hash = (hash << 5) - hash + seedText.charCodeAt(i);
+    hash |= 0;
+  }
+  const range = max - min + 1;
+  return min + (Math.abs(hash) % range);
+};
+
+const buildFallbackLeads = (provider, accountId) => {
+  const count = seededNumber(`${provider}:${accountId}`, 5, 10);
+
+  return Array.from({ length: count }, (_, index) => {
+    const token = `${provider}-${accountId}-${index + 1}`.replace(/[^a-zA-Z0-9-]/g, "").toLowerCase();
+    const phoneSuffix = String(seededNumber(token, 1000000, 9999999));
+
+    return {
+      externalLeadId: `${provider.toUpperCase()}-${accountId}-${index + 1}`,
+      name: `${provider === "google" ? "Google" : "Facebook"} Lead ${index + 1}`,
+      email: `${token}@mocklead.local`,
+      phone: `9${phoneSuffix.slice(0, 7)}${String(index).padStart(2, "0")}`.slice(0, 10),
+      source: provider,
+      status: "New",
+      accountId,
+    };
+  });
+};
+
 const fetchProviderLeads = async (url) => {
   let lastError;
 
@@ -62,6 +97,40 @@ const getMockProviderBaseUrl = () => {
   throw new Error("MOCK_PROVIDER_URL is not configured");
 };
 
+exports.checkProviderHealth = async (req, res) => {
+  try {
+    const baseUrl = getMockProviderBaseUrl();
+    const probeAccountId = "healthcheck-account";
+
+    const rootResponse = await axios.get(`${baseUrl}/`, {
+      timeout: PROVIDER_REQUEST_TIMEOUT_MS,
+    });
+
+    const leadProbeUrl = `${baseUrl}/api/mock/google/${probeAccountId}/leads`;
+    const leadProbeResponse = await axios.get(leadProbeUrl, {
+      timeout: PROVIDER_REQUEST_TIMEOUT_MS,
+    });
+
+    return res.json({
+      ok: true,
+      mockProviderBaseUrl: baseUrl,
+      rootStatus: rootResponse.status,
+      leadProbeStatus: leadProbeResponse.status,
+      leadProbeCount: Array.isArray(leadProbeResponse.data?.leads)
+        ? leadProbeResponse.data.leads.length
+        : 0,
+    });
+  } catch (error) {
+    return res.status(502).json({
+      ok: false,
+      message: "Provider connectivity check failed",
+      mockProviderBaseUrl: process.env.MOCK_PROVIDER_URL || null,
+      error: error.response?.data || error.message,
+      status: error.response?.status || null,
+    });
+  }
+};
+
 exports.syncProviderLeads = async (req, res) => {
   try {
     const { provider } = req.body;
@@ -97,8 +166,20 @@ exports.syncProviderLeads = async (req, res) => {
       });
     }
 
-    const data = await fetchProviderLeads(url);
-    const providerLeads = data.leads || [];
+    let providerLeads = [];
+    let usedFallback = false;
+
+    try {
+      const data = await fetchProviderLeads(url);
+      providerLeads = data.leads || [];
+    } catch (error) {
+      if (!isRetriableUpstreamError(error)) {
+        throw error;
+      }
+
+      providerLeads = buildFallbackLeads(normalizedProvider, accountId);
+      usedFallback = true;
+    }
 
     let inserted = 0;
     let updated = 0;
@@ -161,13 +242,16 @@ exports.syncProviderLeads = async (req, res) => {
     }
 
     return res.json({
-      message: `${normalizedProvider} leads synced successfully`,
+      message: usedFallback
+        ? `${normalizedProvider} leads synced using local fallback (provider unavailable)`
+        : `${normalizedProvider} leads synced successfully`,
       provider: normalizedProvider,
       accountId,
       fetched: providerLeads.length,
       inserted,
       updated,
       totalLeadsInSystem: allLeads.length,
+      fallback: usedFallback,
     });
   } catch (error) {
     const upstreamStatus = error.response?.status;
