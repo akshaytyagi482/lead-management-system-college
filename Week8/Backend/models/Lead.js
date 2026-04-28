@@ -86,6 +86,15 @@ const leadSchema = new mongoose.Schema(
   },{ timestamps: true }
 );
 
-leadSchema.index({ source: 1, providerAccountId: 1, externalLeadId: 1 }, { unique: true, sparse: true });
+leadSchema.index(
+  { source: 1, providerAccountId: 1, externalLeadId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      providerAccountId: { $type: "string" },
+      externalLeadId: { $type: "string" },
+    },
+  }
+);
 
 module.exports = mongoose.model("Lead", leadSchema);
