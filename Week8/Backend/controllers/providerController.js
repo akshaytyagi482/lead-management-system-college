@@ -3,6 +3,19 @@ const Lead = require("../models/Lead");
 const { getIo } = require("../realtime/socket");
 
 const ALLOWED_PROVIDERS = ["google", "facebook"];
+const getMockProviderBaseUrl = () => {
+  const configuredUrl = process.env.MOCK_PROVIDER_URL;
+
+  if (configuredUrl) {
+    return configuredUrl.replace(/\/$/, "");
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    return "http://localhost:6001";
+  }
+
+  throw new Error("MOCK_PROVIDER_URL is not configured");
+};
 
 exports.syncProviderLeads = async (req, res) => {
   try {
@@ -14,7 +27,7 @@ exports.syncProviderLeads = async (req, res) => {
     }
 
     const accountId = `${req.user._id}-${normalizedProvider}`;
-    const baseUrl = process.env.MOCK_PROVIDER_URL || "http://localhost:6001";
+  const baseUrl = getMockProviderBaseUrl();
     const url = `${baseUrl}/api/mock/${normalizedProvider}/${accountId}/leads`;
 
     const { data } = await axios.get(url);
