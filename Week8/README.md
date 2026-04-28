@@ -5,11 +5,38 @@
 ### Deliverable
 Complete Lead Management System deployed live with HTTPS and all features integrated.
 
+### ✨ New Features Added
+
+#### Authentication
+- **Signup Functionality**: New user registration with role selection (Admin/Manager)
+- **Enhanced Login**: Improved UI with better form validation
+- **Password Validation**: Minimum 6 characters required, password confirmation
+
+#### Lead Management Enhancements
+- **Advanced Search**: Search leads by name, email, or phone number
+- **Multi-Filter System**: Filter by status (New, Contacted, Qualified, Converted, Lost) and source
+- **Pagination**: View leads in pages with navigation controls
+- **CSV Export**: Download filtered leads as CSV file for reports
+- **Performance Metrics**: View conversion rate, converted leads, and lost leads
+- **Color-Coded Status**: Visual indicators for different lead statuses and sources
+
+#### Dashboard Analytics
+- **Enhanced Metrics Cards**: Total leads, converted leads, conversion rate, qualified leads, lost leads
+- **Conversion Funnel**: Visual funnel showing lead progression through different stages
+- **Extended Charts**: Bar chart showing all lead sources (Website, Email, Phone, Referral, Social, Facebook, Google)
+- **Status Distribution**: Pie chart showing breakdown of leads by status
+- **Recent Leads Widget**: Quick view of 5 most recent leads added to the system
+
+#### Database
+- **MongoDB Local Connection**: Changed from MongoDB Atlas to localhost for easier development
+- Connection string: `mongodb://localhost:27017/lead-management`
+
 ### Features Implemented (Complete Project)
 
 #### Backend (Node.js + Express.js + MongoDB)
 - RESTful API with full CRUD operations for leads
 - JWT-based authentication with role-based access control (Admin/Manager)
+- User registration endpoint for new users
 - Password hashing with bcryptjs
 - Server-side validation (email, phone, duplicates)
 - MongoDB database with Mongoose ODM
@@ -18,9 +45,19 @@ Complete Lead Management System deployed live with HTTPS and all features integr
 - Meta & Google webhook integrations
 
 #### Frontend (React.js + Vite + Tailwind CSS)
-- **Login Page**: Secure authentication with JWT token storage
-- **Dashboard**: Real-time stats with Bar & Pie charts (Recharts)
-- **Leads Page**: Sortable table with admin delete capability
+- **Login Page**: Secure authentication with JWT token storage + signup link
+- **Signup Page**: User registration with role selection and validation
+- **Dashboard**: 
+  - Real-time stats with Bar & Pie charts (Recharts)
+  - Conversion funnel visualization
+  - Recent leads widget
+  - Multiple metric cards
+- **Leads Page**: 
+  - Advanced search and filtering
+  - Sortable table with admin delete capability
+  - CSV export functionality
+  - Pagination support
+  - Lead statistics
 - **Create Lead**: Form with client-side validation
 - **Reports**: Pie chart visualization of lead sources
 - **Create Admin**: Admin-only page for creating new admin users
@@ -34,13 +71,14 @@ Week8/
 ├── Backend/
 │   ├── server.js
 │   ├── package.json
+│   ├── .env (localhost MongoDB configured)
 │   ├── config/
 │   │   ├── db.js
 │   │   ├── google.js
 │   │   └── meta.js
 │   ├── controllers/
 │   │   ├── leadController.js
-│   │   ├── userController.js
+│   │   ├── userController.js (with signup)
 │   │   ├── googleWebhookController.js
 │   │   └── metaWebhookController.js
 │   ├── middleware/

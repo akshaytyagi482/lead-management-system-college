@@ -23,13 +23,69 @@ const leadSchema = new mongoose.Schema(
     source: {
       type: String,
       required: true,
-      enum: ["website", "google", "facebook"],
+      enum: ["website", "google", "facebook", "email", "phone", "referral", "social"],
     },
     status: {
-      type:String,
-      default:"New"
+      type: String,
+      enum: ["New", "Contacted", "Qualified", "Converted", "Lost"],
+      default: "New"
+    },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    assignedAt: {
+      type: Date,
+      default: null,
+    },
+    firstResponseAt: {
+      type: Date,
+      default: null,
+    },
+    followUpAt: {
+      type: Date,
+      default: null,
+    },
+    notes: [
+      {
+        author: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        text: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      }
+    ],
+    externalLeadId: {
+      type: String,
+      default: null,
+    },
+    providerAccountId: {
+      type: String,
+      default: null,
+    },
+    fetchedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     }
   },{ timestamps: true }
 );
+
+leadSchema.index({ source: 1, providerAccountId: 1, externalLeadId: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model("Lead", leadSchema);

@@ -12,7 +12,7 @@ const generateToken = (id) => {
 
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -25,7 +25,7 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || "Manager"
+      role: "Manager"
     });
 
     res.status(201).json({
@@ -37,7 +37,6 @@ exports.registerUser = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "User registration failed" });
-    error:error.message
   }
 };
 
@@ -63,9 +62,17 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-exports.createAdmin = async (req, res) => {
+exports.createManager = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email and password are required" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
 
     // Check existing user
     const userExists = await User.findOne({ email });
@@ -75,27 +82,44 @@ exports.createAdmin = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newAdmin = await User.create({
+    const newManager = await User.create({
       name,
       email,
-      password:hashedPassword ,// (hash later if not yet)
-      role: "Admin"
+      password: hashedPassword,
+      role: "Manager"
     });
 
     res.status(201).json({
-      message: "Admin created successfully",
-      admin: {
-        id: newAdmin._id,
-        email: newAdmin.email,
-        role: newAdmin.role
+      message: "Manager account created successfully",
+      manager: {
+        id: newManager._id,
+        name: newManager.name,
+        email: newManager.email,
+        role: newManager.role
+      },
+      credentialsToShare: {
+        email,
+        password
       }
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to create admin" });
+    res.status(500).json({ message: "Failed to create manager" });
   }
 };
 
 
 exports.getProfile = async (req, res) => {
   res.json(req.user);
+};
+
+exports.getManagers = async (req, res) => {
+  try {
+    const managers = await User.find({ role: "Manager" })
+      .select("_id name email role")
+      .sort({ name: 1 });
+
+    res.json(managers);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch managers" });
+  }
 };

@@ -14,17 +14,25 @@ const Reports = () => {
     website: 0,
     google: 0,
     facebook: 0,
+    email: 0,
+    phone: 0,
+    referral: 0,
+    social: 0,
   });
 
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/leads`);
+        const { data } = await api.get("/leads");
 
         const summary = {
           website: 0,
           google: 0,
           facebook: 0,
+          email: 0,
+          phone: 0,
+          referral: 0,
+          social: 0,
         };
 
         data.forEach((lead) => {
@@ -47,9 +55,13 @@ const Reports = () => {
     { name: "Website", value: report.website },
     { name: "Google", value: report.google },
     { name: "Facebook", value: report.facebook },
+    { name: "Email", value: report.email },
+    { name: "Phone", value: report.phone },
+    { name: "Referral", value: report.referral },
+    { name: "Social", value: report.social },
   ];
 
-  const COLORS = ["#3B82F6", "#10B981", "#6366F1"];
+  const COLORS = ["#3B82F6", "#10B981", "#6366F1", "#F59E0B", "#EF4444", "#14B8A6", "#8B5CF6"];
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -60,10 +72,14 @@ const Reports = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <ReportCard title="Website Leads" value={report.website} />
         <ReportCard title="Google Leads" value={report.google} />
         <ReportCard title="Facebook Leads" value={report.facebook} />
+        <ReportCard title="Email Leads" value={report.email} />
+        <ReportCard title="Phone Leads" value={report.phone} />
+        <ReportCard title="Referral Leads" value={report.referral} />
+        <ReportCard title="Social Leads" value={report.social} />
       </div>
 
       <div className="bg-white rounded-xl shadow p-6">

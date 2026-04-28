@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import Reports from "./pages/Reports";
 import CreateLead from "./pages/CreateLead";
-import CreateAdmin from "./pages/CreateAdmin";
+import CreateManager from "./pages/CreateAdmin";
 
 import ProtectedLayout from "./components/ProtectedLayout";
 import AdminRoute from "./components/AdminRoute";
@@ -15,8 +16,10 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Public Route */}
+        {/* Public Routes */}
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedLayout />}>
@@ -28,10 +31,10 @@ function App() {
 
           {/* Admin Only */}
           <Route
-            path="/admin-create"
+            path="/manager-create"
             element={
               <AdminRoute>
-                <CreateAdmin />
+                <CreateManager />
               </AdminRoute>
             }
           />

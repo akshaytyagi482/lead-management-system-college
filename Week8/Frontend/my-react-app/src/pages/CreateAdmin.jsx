@@ -1,12 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
 
-const CreateAdmin = () => {
+const CreateManager = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: ""
   });
+  const [createdCredentials, setCreatedCredentials] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,8 +19,8 @@ const CreateAdmin = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/admin/create`,
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/manager/create`,
         form,
         {
           headers: {
@@ -28,17 +29,21 @@ const CreateAdmin = () => {
         }
       );
 
-      alert("Admin created successfully");
+      alert("Manager created successfully");
+      setCreatedCredentials(data.credentialsToShare || { email: form.email, password: form.password });
       setForm({ name: "", email: "", password: "" });
 
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to create admin");
+      alert(err.response?.data?.message || "Failed to create manager");
     }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-6 shadow rounded">
-      <h2 className="text-xl font-semibold mb-4">Create New Admin</h2>
+      <h2 className="text-xl font-semibold mb-4">Create Manager Account</h2>
+      <p className="text-sm text-gray-600 mb-4">
+        Admin can create manager accounts and share generated login details.
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -73,11 +78,21 @@ const CreateAdmin = () => {
         <button
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          Create Admin
+          Create Manager
         </button>
       </form>
+
+      {createdCredentials && (
+        <div className="mt-5 rounded border border-green-200 bg-green-50 p-4">
+          <p className="text-sm font-semibold text-green-700 mb-2">
+            Share these credentials with the manager:
+          </p>
+          <p className="text-sm text-gray-800">Email: {createdCredentials.email}</p>
+          <p className="text-sm text-gray-800">Password: {createdCredentials.password}</p>
+        </div>
+      )}
     </div>
   );
 };
 
-export default CreateAdmin;
+export default CreateManager;
