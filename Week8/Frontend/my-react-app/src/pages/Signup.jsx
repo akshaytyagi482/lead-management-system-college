@@ -26,7 +26,6 @@ const Signup = () => {
     e.preventDefault();
     setError("");
 
-    // Validation
     if (!formData.name.trim()) {
       setError("Name is required");
       return;
@@ -60,7 +59,6 @@ const Signup = () => {
         }
       );
 
-      // After signup, user should login
       alert("Account created successfully! Please login.");
       navigate("/login");
     } catch (err) {
@@ -71,24 +69,31 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-lg p-8">
-        <h2 className="text-3xl font-bold text-center mb-2 text-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
+      
+      {/* Glow Background */}
+      <div className="absolute w-[500px] h-[500px] bg-purple-500 opacity-20 blur-3xl rounded-full top-[-120px] right-[-120px]"></div>
+      <div className="absolute w-[400px] h-[400px] bg-blue-500 opacity-20 blur-3xl rounded-full bottom-[-120px] left-[-120px]"></div>
+
+      <div className="w-full max-w-md backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.6)] rounded-2xl p-8 text-white">
+        
+        <h2 className="text-3xl font-bold text-center mb-2 tracking-wide">
           Create Account
         </h2>
-        <p className="text-center text-gray-600 text-sm mb-6">
+        <p className="text-center text-gray-400 text-sm mb-6">
           Join our Lead Management System
         </p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-md">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-md backdrop-blur">
             {error}
           </div>
         )}
 
-        <form onSubmit={submitHandler} className="space-y-4">
+        <form onSubmit={submitHandler} className="space-y-5">
+          
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-300">
               Full Name
             </label>
             <input
@@ -98,12 +103,12 @@ const Signup = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder-gray-500 text-white transition"
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-300">
               Email
             </label>
             <input
@@ -113,12 +118,12 @@ const Signup = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500 text-white transition"
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-300">
               Password
             </label>
             <input
@@ -128,12 +133,12 @@ const Signup = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder-gray-500 text-white transition"
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-300">
               Confirm Password
             </label>
             <input
@@ -143,38 +148,41 @@ const Signup = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500 text-white transition"
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
+            <label className="block text-sm font-medium mb-2 text-gray-300">
               Role
             </label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
             >
-              <option value="Manager">Manager</option>
-              <option value="Admin">Admin</option>
+              <option value="Manager" className="bg-black">Manager</option>
+              <option value="Admin" className="bg-black">Admin</option>
             </select>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2 rounded-md font-semibold bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 transition-all duration-300 shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 text-sm">
+        <div className="mt-6 text-center border-t border-white/10 pt-6">
+          <p className="text-gray-400 text-sm">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 hover:underline font-semibold">
+            <Link
+              to="/login"
+              className="text-blue-400 hover:text-blue-300 font-semibold transition"
+            >
               Login here
             </Link>
           </p>
