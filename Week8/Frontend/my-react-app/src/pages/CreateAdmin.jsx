@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 
 const CreateManager = () => {
   const [form, setForm] = useState({
@@ -17,17 +17,7 @@ const CreateManager = () => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
-
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/manager/create`,
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      const { data } = await api.post("/manager/create", form);
 
       alert("Manager created successfully");
       setCreatedCredentials(data.credentialsToShare || { email: form.email, password: form.password });
