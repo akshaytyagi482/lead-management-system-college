@@ -29,7 +29,11 @@ const CreateLead = () => {
 
     try {
       setLoading(true);
-      await api.post("/leads", form);
+      const token = localStorage.getItem("token");
+
+      await api.post("/leads", form, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       setSuccess("Lead created successfully");
       setForm({ name: "", phone: "", email: "", source: "website" });
     } catch (err) {
